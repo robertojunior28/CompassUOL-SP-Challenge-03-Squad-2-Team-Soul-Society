@@ -1,0 +1,17 @@
+application:
+  port: 8083
+
+
+spring:
+  database:
+    host: localhost
+    port: 5432
+    name: ecommerce
+    username: postgres
+    password: Roberto2101#
+jpa:
+  hibernate:
+    ddl-auto: create
+  properties:
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
