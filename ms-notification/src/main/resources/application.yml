@@ -3,15 +3,21 @@ application:
 
 
 spring:
-  database:
-    host: localhost
-    port: 5432
-    name: ecommerce
+  datasource:
+    url: jdbc:postgresql://localhost:5432/email
     username: postgres
     password: Roberto2101#
-jpa:
-  hibernate:
-    ddl-auto: create
-  properties:
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: update
+    show-sql: true
+  rabbitmq:
+    addresses: amqps://xjjvakqt:67tjRR6LVJc0d6uvIAWwAqjS347Fkrel@jackal.rmq.cloudamqp.com/xjjvakqt
+    queue: ms-email
+
+
+
+

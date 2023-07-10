@@ -1,7 +1,6 @@
 package br.com.compassuol.pb.challenge.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +31,7 @@ public class Product {
             joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))
     private Set<Category> category;
-    private Date date;
+    private Date date = new Date();
     private String imgUrl;
 
 
