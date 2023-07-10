@@ -1,4 +1,5 @@
 package br.com.compassuol.pb.challenge.config;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

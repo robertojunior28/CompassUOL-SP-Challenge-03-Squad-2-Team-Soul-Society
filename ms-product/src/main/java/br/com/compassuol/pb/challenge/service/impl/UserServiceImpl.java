@@ -5,6 +5,7 @@ import br.com.compassuol.pb.challenge.entity.User;
 import br.com.compassuol.pb.challenge.exception.ResourceNotFoundException;
 import br.com.compassuol.pb.challenge.payload.UserDto;
 import br.com.compassuol.pb.challenge.payload.UserResponse;
+import br.com.compassuol.pb.challenge.producer.RabbitMQProducer;
 import br.com.compassuol.pb.challenge.repository.UserRepository;
 import br.com.compassuol.pb.challenge.security.JwtTokenProvider;
 import br.com.compassuol.pb.challenge.service.UserService;
@@ -30,17 +31,21 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
     private JwtTokenProvider jwtTokenProvider;
+
+    private RabbitMQProducer producer;
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            ModelMapper modelMapper,
                            PasswordEncoder passwordEncoder,
                            AuthenticationManager authenticationManager,
-                           JwtTokenProvider jwtTokenProvider) {
+                           JwtTokenProvider jwtTokenProvider,
+                           RabbitMQProducer producer) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.producer = producer;
 
     }
 
@@ -49,7 +54,7 @@ public class UserServiceImpl implements UserService {
         User user = modelMapper.map(userDto,User.class);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         User savedUser = userRepository.save(user);
-        savedUser.setPassword("");
+        producer.sendMessage(savedUser);
         return modelMapper.map(savedUser, UserDto.class);
     }
 
@@ -71,6 +76,7 @@ public class UserServiceImpl implements UserService {
         user.setRoles(userDto.getRoles());
 
         User updatedUser = userRepository.save(user);
+        producer.sendMessage(updatedUser);
         return modelMapper.map(updatedUser, UserDto.class);
     }
 

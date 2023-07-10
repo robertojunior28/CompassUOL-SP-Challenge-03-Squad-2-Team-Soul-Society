@@ -29,9 +29,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
         scheme = "bearer"
 )
 public class SecurityConfig {
-
+    @Autowired
     private UserDetailsService userDetailsService;
-
+    @Autowired
     private JwtAuthenticationEntryPoint authenticationEntryPoint;
     @Autowired
     private JwtAuthenticationFilter authenticationFilter;
@@ -60,6 +60,9 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authorizeHttpRequests((authorize) ->
                         authorize.requestMatchers(HttpMethod.GET, "/**").permitAll()
+                                .requestMatchers("/oauth/token").permitAll()
+                                .requestMatchers("/register").permitAll()
+                                .requestMatchers("/signup").permitAll()
                                 .anyRequest().authenticated()
 
                 ).exceptionHandling( exception -> exception

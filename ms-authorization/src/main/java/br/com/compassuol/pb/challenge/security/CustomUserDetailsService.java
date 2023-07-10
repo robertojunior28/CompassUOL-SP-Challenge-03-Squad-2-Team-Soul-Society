@@ -1,5 +1,6 @@
 package br.com.compassuol.pb.challenge.security;
 
+
 import br.com.compassuol.pb.challenge.entity.Login;
 import br.com.compassuol.pb.challenge.repository.LoginRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-
-    private LoginRepository loginRepository;
     @Autowired
-    public CustomUserDetailsService(LoginRepository userRepository) {
-        this.loginRepository = userRepository;
-    }
+    private LoginRepository loginRepository;
+
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

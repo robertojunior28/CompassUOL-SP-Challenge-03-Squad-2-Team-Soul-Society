@@ -21,45 +21,45 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 public class RabbitMQConfig {
 
-//    private final RabbitMqConstants constants;
-//
-//    @Bean
-//    public Queue queue() {
-//        return new Queue(constants.queueName, false);
-//    }
-//
-//    @Bean
-//    public DirectExchange exchange() {
-//        return new DirectExchange(constants.exchange);
-//    }
-//
-//    @Bean
-//    public Binding binding(Queue queue, DirectExchange exchange) {
-//        return BindingBuilder.bind(queue).to(exchange).with(constants.routingkey);
-//    }
-//
-//    @Bean
-//    public MessageConverter jsonMessageConverter() {
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        return new Jackson2JsonMessageConverter(objectMapper);
-//    }
-//
-//    @Bean
-//    public ConnectionFactory connectionFactory() {
-//        CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-//        connectionFactory.setVirtualHost(constants.virtualHost);
-//        connectionFactory.setHost(constants.host);
-//        connectionFactory.setUsername(constants.username);
-//        connectionFactory.setPassword(constants.password);
-//        return connectionFactory;
-//    }
-//
-//    @Bean
-//    RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-//        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-//        rabbitTemplate.setMessageConverter(jsonMessageConverter());
-//        return rabbitTemplate;
-//    }
+    private final RabbitMqConstants constants;
+
+    @Bean
+    public Queue queue() {
+        return new Queue(constants.queueName, false);
+    }
+
+    @Bean
+    public DirectExchange exchange() {
+        return new DirectExchange(constants.exchange);
+    }
+
+    @Bean
+    public Binding binding(Queue queue, DirectExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(constants.routingkey);
+    }
+
+    @Bean
+    public MessageConverter jsonMessageConverter() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return new Jackson2JsonMessageConverter(objectMapper);
+    }
+
+    @Bean
+    public ConnectionFactory connectionFactory() {
+        CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
+        connectionFactory.setVirtualHost(constants.virtualHost);
+        connectionFactory.setHost(constants.host);
+        connectionFactory.setUsername(constants.username);
+        connectionFactory.setPassword(constants.password);
+        return connectionFactory;
+    }
+
+    @Bean
+    RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(jsonMessageConverter());
+        return rabbitTemplate;
+    }
 
 
 }
