@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +40,9 @@ public class ProductServiceImpl implements ProductService {
         Category category = categoryRepository.findById(product.getCategory().iterator().next().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", product.getCategory().iterator().next().getId()));
 
+        product.getCategory().clear();
         product.getCategory().add(category);
+        product.setDate(LocalDateTime.now());
         Product newProduct = productRepository.save(product);
 
         ProductDto productResponse = mapper.map(newProduct, ProductDto.class);
@@ -90,7 +93,7 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(productDto.getPrice());
         product.setDescription(productDto.getDescription());
         product.getCategory().add(category);
-        product.setDate(new Date());
+        product.setDate(LocalDateTime.now());
         product.setImgUrl(productDto.getImgUrl());
         Product updatedProduct = productRepository.save(product);
         return mapper.map(product, ProductDto.class);

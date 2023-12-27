@@ -23,17 +23,17 @@ public class ProductController {
         this.productService = productService;
     }
     @PostMapping
-    public ResponseEntity createProduct(@Valid @RequestBody ProductDto productDto){
+    public ResponseEntity createProduct(@RequestBody ProductDto productDto){
         return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.CREATED);
     }
     @GetMapping
     public ProductResponse getAllPosts(
-            @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir
+            @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int page,
+            @RequestParam(value = "linesPerPage", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int linesPerPage,
+            @RequestParam(value = "direction", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String direction,
+            @RequestParam(value = "orderBy", defaultValue = AppConstants.DEFAULT_SORT_DIRECTION, required = false) String orderBy
     ){
-        return productService.getAllProducts(pageNo, pageSize, sortBy, sortDir);
+        return productService.getAllProducts(page, linesPerPage, direction, orderBy);
     }
 
     @GetMapping("/{id}")
@@ -41,7 +41,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductById(id));
     }
     @PutMapping("/{id}")
-    public ResponseEntity updateProduct(@Valid @RequestBody ProductDto productDto, @PathVariable long id){
+    public ResponseEntity updateProduct(@RequestBody ProductDto productDto, @PathVariable long id){
         ProductDto productResponse = productService.updateProduct(productDto, id);
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }

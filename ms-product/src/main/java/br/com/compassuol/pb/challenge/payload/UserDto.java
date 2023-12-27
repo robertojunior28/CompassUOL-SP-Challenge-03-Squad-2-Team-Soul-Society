@@ -33,7 +33,7 @@ public class UserDto {
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotEmpty
-    @Size(min = 6, message = "Password should have at least 6 characters")
+    @Size(min = 3, message = "Password should have at least 3 characters")
     private String password;
     private List<UserRole> userRole = new ArrayList<>();
 
