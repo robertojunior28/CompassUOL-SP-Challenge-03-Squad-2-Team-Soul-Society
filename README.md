@@ -1,15 +1,15 @@
 # CompassUOL-SP-Challenge-03-Squad-2-Jose-Roberto<h1/>
 <br/><br/><br/>
 
-###Olá, essa API foi proposta em um desafio durante meu estágio/programa de bolsas da Compass.UOL<br/>
-###É uma API compostas por microserviços que faz tarefas básicas de autenticação, mensageria com <br/>
-###RabbitMQ, envio de e-mail automatizado e comunicação entre os microserviços.<br/>
-###Foi um desafio!<br/>
-###Principalmente a parte de autenticação, porém os desafios estão aí para a gente superar e evoluir.<br/>
+Olá, essa API foi proposta em um desafio durante meu estágio/programa de bolsas da Compass.UOL<br/>
+É uma API compostas por microserviços que faz tarefas básicas de autenticação, mensageria com <br/>
+RabbitMQ, envio de e-mail automatizado e comunicação entre os microserviços.<br/>
+Foi um desafio!<br/>
+Principalmente a parte de autenticação, porém os desafios estão aí para a gente superar e evoluir.<br/>
 <br/><br/>
 ## Link do vídeo demonstrando a API no YouTube
 
-###[Vídeo de Demonstração](https://youtu.be/J27mm4EaD_g).
+[Vídeo de Demonstração](https://youtu.be/J27mm4EaD_g).
 
 
 <br/><br/><br/>
