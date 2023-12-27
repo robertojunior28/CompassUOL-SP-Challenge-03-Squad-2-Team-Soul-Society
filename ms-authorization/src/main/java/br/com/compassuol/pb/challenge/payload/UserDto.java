@@ -1,16 +1,15 @@
 package br.com.compassuol.pb.challenge.payload;
 
-import br.com.compassuol.pb.challenge.entity.Role;
+import br.com.compassuol.pb.challenge.entity.User;
+import br.com.compassuol.pb.challenge.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,9 +27,25 @@ public class UserDto {
     @NotEmpty
     @Email
     private String email;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotEmpty
-    @Size(min = 6, message = "Password should have at least 6 characters")
+    @Size(min = 3, message = "Password should have at least 3 characters")
     private String password;
-    private Set<Role> roles;
+    private List<UserRole> userRole = new ArrayList<>();
+
+
+    public void setUserRole(User user) {
+        if(user.getUserRole().getRole() != null) {
+            if (user.getUserRole().getRole() == UserRole.ADMIN.getRole()) {
+                userRole.add(UserRole.ADMIN);
+                userRole.add(UserRole.OPERATOR);
+            } else {
+                userRole.add(UserRole.OPERATOR);
+            }
+        }
+    }
+
+    public List<UserRole> getRoles() {
+        return userRole;
+    }
 }

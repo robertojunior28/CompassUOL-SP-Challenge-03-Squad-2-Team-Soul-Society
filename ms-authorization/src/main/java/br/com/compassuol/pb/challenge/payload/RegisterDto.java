@@ -1,5 +1,7 @@
 package br.com.compassuol.pb.challenge.payload;
 
+import br.com.compassuol.pb.challenge.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -8,25 +10,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterDto {
+public class RegisterDto{
     private Long id;
-    @NotEmpty(message = "First name cannot be empty")
+    @NotEmpty
     @Size(min = 3, message = "First name should have at least 3 characters")
     private String firstName;
-    @NotEmpty(message = "Last Name cannot be empty")
+    @NotEmpty
     @Size(min = 3, message = "Last name should have at least 3 characters")
     private String lastName;
-    @NotEmpty(message = "Email cannot be empty")
-    @Email(message = "Provide a valid email")
+    @NotEmpty
+    @Email
     private String email;
-    @NotEmpty(message = "Password a valid email")
-    @Size(min = 6, message = "Password should have at least 6 characters")
+    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @NotEmpty
+    @Size(min = 3, message = "Password should have at least 3 characters")
     private String password;
-    private Set<RoleDto> roles;
+    private List<UserRole> userRole = new ArrayList<>();
 }

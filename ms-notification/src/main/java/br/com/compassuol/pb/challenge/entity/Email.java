@@ -23,7 +23,7 @@ public class Email {
     @Column(nullable = false)
     private String replyTo;
     @Column(nullable = false)
-    private String to;
+    private String toR;
     @Column(nullable = false)
     private String subject;
     @Column(columnDefinition = "TEXT", nullable = false)

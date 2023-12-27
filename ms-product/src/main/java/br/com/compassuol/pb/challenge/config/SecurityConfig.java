@@ -1,75 +1,86 @@
 package br.com.compassuol.pb.challenge.config;
 
 
-import br.com.compassuol.pb.challenge.security.JwtAuthenticationEntryPoint;
-import br.com.compassuol.pb.challenge.security.JwtAuthenticationFilter;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import br.com.compassuol.pb.challenge.security.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
-@EnableMethodSecurity
-@SecurityScheme(
-        name = "Bear Authentication",
-        type = SecuritySchemeType.HTTP,
-        bearerFormat = "JWT",
-        scheme = "bearer"
-)
+@EnableWebSecurity
 public class SecurityConfig {
 
-    private UserDetailsService userDetailsService;
+    @Autowired
+    SecurityFilter securityFilter;
 
-    private JwtAuthenticationEntryPoint authenticationEntryPoint;
-    @Autowired
-    private JwtAuthenticationFilter authenticationFilter;
-    @Autowired
-    public SecurityConfig(UserDetailsService userDetailsService,
-                          JwtAuthenticationEntryPoint authenticationEntryPoint,
-                          JwtAuthenticationFilter authenticationFilter){
-        this.userDetailsService = userDetailsService;
-        this.authenticationEntryPoint = authenticationEntryPoint;
-        this.authenticationFilter = authenticationFilter;
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.POST, "/products").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/products").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/products/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/products/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/products/**").authenticated()
+                )
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+
+
+        return httpSecurity.build();
+    }
+
+
+    @Bean
+    public FilterRegistrationBean<CorsFilter> corsFilter() {
+        List<String> allowedOrigins = Arrays.asList("**");
+
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(allowedOrigins);
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization"));
+        corsConfiguration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+
+        CorsFilter corsFilter = new CorsFilter(source);
+
+        FilterRegistrationBean<CorsFilter> filter = new FilterRegistrationBean<>(corsFilter);
+        filter.setOrder(Ordered.HIGHEST_PRECEDENCE);
+
+        return filter;
+    }
+
+
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    public static PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
-    }
-
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        http.csrf().disable()
-                .authorizeHttpRequests((authorize) ->
-                        authorize.requestMatchers(HttpMethod.GET, "/**").permitAll()
-                                .anyRequest().authenticated()
-
-                ).exceptionHandling( exception -> exception
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                ).sessionManagement( session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
-
-        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
 }
+

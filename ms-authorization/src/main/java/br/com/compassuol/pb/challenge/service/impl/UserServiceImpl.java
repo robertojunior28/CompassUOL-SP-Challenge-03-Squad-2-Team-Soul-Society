@@ -1,13 +1,12 @@
 package br.com.compassuol.pb.challenge.service.impl;
 
-
 import br.com.compassuol.pb.challenge.entity.User;
+import br.com.compassuol.pb.challenge.enums.UserRole;
 import br.com.compassuol.pb.challenge.exception.ResourceNotFoundException;
 import br.com.compassuol.pb.challenge.payload.UserDto;
 import br.com.compassuol.pb.challenge.payload.UserResponse;
-import br.com.compassuol.pb.challenge.producer.RabbitMQProducer;
+import br.com.compassuol.pb.challenge.producer.UserProducer;
 import br.com.compassuol.pb.challenge.repository.UserRepository;
-import br.com.compassuol.pb.challenge.security.JwtTokenProvider;
 import br.com.compassuol.pb.challenge.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +14,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,41 +27,34 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
-    private ModelMapper modelMapper;
+    private ModelMapper mapper;
     private PasswordEncoder passwordEncoder;
-    private AuthenticationManager authenticationManager;
-    private JwtTokenProvider jwtTokenProvider;
-
-    private RabbitMQProducer producer;
+    private UserProducer userProducer;
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
-                           ModelMapper modelMapper,
+                           ModelMapper mapper,
                            PasswordEncoder passwordEncoder,
-                           AuthenticationManager authenticationManager,
-                           JwtTokenProvider jwtTokenProvider,
-                           RabbitMQProducer producer) {
+                           UserProducer userProducer) {
         this.userRepository = userRepository;
-        this.modelMapper = modelMapper;
+        this.mapper = mapper;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.producer = producer;
-
+        this.userProducer = userProducer;
     }
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        User user = modelMapper.map(userDto,User.class);
+        User user = mapper.map(userDto,User.class);
+        user.setUserRole(Collections.singletonList(UserRole.OPERATOR));
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         User savedUser = userRepository.save(user);
-        producer.sendMessage(savedUser);
-        return modelMapper.map(savedUser, UserDto.class);
+        userProducer.publishMessageEmailRegister(savedUser);
+        return mapper.map(savedUser, UserDto.class);
     }
 
     @Override
     public UserDto getUser(Long id) {
         Optional user = userRepository.findById(id);
-        return modelMapper.map(user, UserDto.class);
+        return mapper.map(user, UserDto.class);
     }
 
     @Override
@@ -73,11 +66,13 @@ public class UserServiceImpl implements UserService {
         user.setLastName(userDto.getLastName());
         user.setEmail(userDto.getEmail());
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setRoles(userDto.getRoles());
+        user.setUserRole(userDto.getRoles());
 
         User updatedUser = userRepository.save(user);
-        producer.sendMessage(updatedUser);
-        return modelMapper.map(updatedUser, UserDto.class);
+
+        userProducer.publishMessageEmailUpdating(updatedUser);
+
+        return mapper.map(updatedUser, UserDto.class);
     }
 
     @Override
@@ -100,7 +95,7 @@ public class UserServiceImpl implements UserService {
         List<User> listOfUsers = users.getContent();
 
         List<UserDto> content = listOfUsers.stream().map(
-                user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
+                user -> mapper.map(user, UserDto.class)).collect(Collectors.toList());
 
         UserResponse userResponse = new UserResponse();
         userResponse.setContent(content);
@@ -115,3 +110,4 @@ public class UserServiceImpl implements UserService {
 
 
 }
+

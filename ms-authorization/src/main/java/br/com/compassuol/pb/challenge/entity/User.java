@@ -1,6 +1,5 @@
 package br.com.compassuol.pb.challenge.entity;
 
-
 import br.com.compassuol.pb.challenge.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -60,11 +59,11 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.password;
+        return password;
     }
     @Override
     public String getUsername() {
-        return this.email;
+        return email;
     }
     @Override
     public boolean isAccountNonExpired() {

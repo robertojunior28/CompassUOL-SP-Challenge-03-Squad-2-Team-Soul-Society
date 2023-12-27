@@ -1,36 +1,30 @@
 package br.com.compassuol.pb.challenge.controller;
 
-import br.com.compassuol.pb.challenge.payload.JWTAuthResponse;
 import br.com.compassuol.pb.challenge.payload.LoginDto;
-import br.com.compassuol.pb.challenge.payload.RegisterDto;
-import br.com.compassuol.pb.challenge.service.AuthService;
+import br.com.compassuol.pb.challenge.service.AuthorizationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/oauth")
 public class AuthController {
 
-    private AuthService authService;
+    @Autowired
+    private AuthorizationService authorizationService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
+    public AuthController(AuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
     }
 
-    @PostMapping(value = {"/oauth/token"})
-    public ResponseEntity<JWTAuthResponse> login(@RequestBody LoginDto loginDto){
-        String token = authService.login(loginDto);
-
-        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
-        jwtAuthResponse.setAccessToken(token);
-
-        return ResponseEntity.ok(jwtAuthResponse);
+    @PostMapping("/token")
+    public ResponseEntity login(@RequestBody LoginDto loginDto){
+        try {
+            return new ResponseEntity(authorizationService.login(loginDto.email(), loginDto.password()), HttpStatus.OK);
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    @PostMapping(value = {"/register"})
-    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto){
-        String response = authService.register(registerDto);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
 }

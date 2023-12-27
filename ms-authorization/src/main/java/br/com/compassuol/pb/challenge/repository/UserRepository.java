@@ -1,13 +1,13 @@
 package br.com.compassuol.pb.challenge.repository;
 
+
 import br.com.compassuol.pb.challenge.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    UserDetails findByEmail(String email);
+
+    User findByEmail(String email);
+
 
 }

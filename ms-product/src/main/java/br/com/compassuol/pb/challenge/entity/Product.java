@@ -25,7 +25,7 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
     @Column(nullable = false)
-    private String Description;
+    private String description;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "tb_product_category",
             joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),

@@ -18,18 +18,14 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
 
     private ProductServiceImpl productService;
-    private ModelMapper mapper;
     @Autowired
-    public ProductController(ProductServiceImpl productService, ModelMapper mapper) {
+    public ProductController(ProductServiceImpl productService) {
         this.productService = productService;
-        this.mapper = mapper;
     }
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody ProductDto productDto){
+    public ResponseEntity createProduct(@Valid @RequestBody ProductDto productDto){
         return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.CREATED);
     }
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ProductResponse getAllPosts(
             @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
@@ -41,18 +37,16 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDto> getProductById(@PathVariable long id){
+    public ResponseEntity getProductById(@PathVariable long id){
         return ResponseEntity.ok(productService.getProductById(id));
     }
-    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDto> updateProduct(@Valid @RequestBody ProductDto productDto, @PathVariable long id){
+    public ResponseEntity updateProduct(@Valid @RequestBody ProductDto productDto, @PathVariable long id){
         ProductDto productResponse = productService.updateProduct(productDto, id);
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable long id){
+    public ResponseEntity deletePost(@PathVariable long id){
         productService.deleteProductById(id);
         return new ResponseEntity<>("Product entity deleted successfully.", HttpStatus.OK);
     }
