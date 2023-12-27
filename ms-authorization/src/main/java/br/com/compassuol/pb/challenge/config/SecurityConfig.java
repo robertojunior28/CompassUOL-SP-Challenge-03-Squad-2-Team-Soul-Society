@@ -1,6 +1,7 @@
 package br.com.compassuol.pb.challenge.config;
 
 
+import br.com.compassuol.pb.challenge.enums.UserRole;
 import br.com.compassuol.pb.challenge.security.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -38,9 +39,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/oauth/token").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "users/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/users").hasAnyAuthority(UserRole.ADMIN.getRole())
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority(UserRole.ADMIN.getRole())
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyAuthority(UserRole.ADMIN.getRole())
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
 

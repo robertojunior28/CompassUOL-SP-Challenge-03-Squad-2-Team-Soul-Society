@@ -25,11 +25,11 @@ public class ProductDto {
     @Positive
     private BigDecimal price;
     @NotEmpty
-    @Size(min = 10, message = "Description should have at least 10 characters")
-    private String Description;
-    @NotEmpty
+    @Size(min = 5, message = "Description should have at least 5 characters")
+    private String description;
+//    @NotEmpty
 
     private Set<Category> category;
-    private Date date;
+    private String date;
     private String imgUrl;
 }
