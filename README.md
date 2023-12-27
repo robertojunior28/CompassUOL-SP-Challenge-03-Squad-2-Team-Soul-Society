@@ -1,5 +1,9 @@
 # CompassUOL-SP-Challenge-03-Squad-2-Jose-Roberto
 
+# Descrição da API
+<img src="description_api.png">
+
+
 # Link do vídeo demonstrando a API no YouTube
 
 
